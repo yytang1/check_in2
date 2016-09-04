@@ -52,7 +52,7 @@ def check_in(req):
                 print(person.pay)
                 persons.append(person)
                 print(persons)
-            return render_to_response('check_in.html',{'persons':persons})
+            return render_to_response('check_in2.html',{'persons':persons})
 #         if 'btn_add' or 'add' in req.GET:
         if btn_name == "add":
             print(req.GET)
@@ -80,7 +80,7 @@ def check_in(req):
             conference.save()
             print(conference)
             print(req.GET)
-            return render_to_response('check_in.html', {'errors': errors})
+            return render_to_response('check_in2.html', {'errors': errors})
         if 'btn_edit' in req.GET:
             print(req.GET)
         if 'btn_delete' in req.GET:
@@ -88,5 +88,5 @@ def check_in(req):
     except Exception as err:
         errors.append(err)
         print(err)  
-        return render_to_response('check_in.html', {'errors': errors})
-    return render_to_response('check_in.html')
+        return render_to_response('check_in2.html', {'errors': errors})
+    return render_to_response('check_in2.html')

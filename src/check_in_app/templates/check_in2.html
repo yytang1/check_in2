@@ -1,0 +1,121 @@
+{% extends "index.html" %} {% block vulneContent %} {%if errors%} {%for error in errors%}
+<p style="color:red">{{error}}</p>
+{%endfor%} {%endif%}
+<div class="panel panel-default">
+	<div class="panel-body">
+		<form role="form" action="/check_in/" method="get">
+			<div class="form-group">
+				<ul>
+					<input type="submit" class="btn btn-default" id="btn_search" name="btn_search" value="查找" />
+					<input type="submit" class="btn btn-default" id="btn_add" name="btn_add" value="新增" />
+					<input type="submit" class="btn btn-default" id="btn_edit" name="btn_edit" value="修改" />
+					<input type="submit" class="btn btn-default" id="btn_del" name="btn_del" value="删除" />
+					<input type="reset" class="btn btn-primary" id="btn_reset" name="btn_reset" value="重置" />
+					<input type="hidden" id="btn_name" value="none" />
+				</ul>
+			</div>
+			<ul>
+				<div class="input-group">
+					<span class="input-group-addon">姓名</span>
+					<input type="text" class="form-control" id="name" name="name">
+					<span class="input-group-addon">性别</span>
+					<input type="text" class="form-control" id="name" name="name">
+					<span class="input-group-addon">身份证号</span>
+					<input type="text" class="form-control" id="name" name="name">
+					<span class="input-group-addon">工作单位</span>
+					<input type="text" class="form-control" id="name" name="name">
+					<span class="input-group-addon">科室</span>
+					<input type="text" class="form-control" id="name" name="name">
+				</div>
+			</ul>
+
+			<ul>
+				<div class="input-group">
+					<span class="input-group-addon">学历</span>
+					<input type="text" class="form-control" id="name" name="name">
+					<span class="input-group-addon">职称</span>
+					<input type="text" class="form-control" id="name" name="name">
+					<span class="input-group-addon">职务</span>
+					<input type="text" class="form-control" id="name" name="name">
+					<span class="input-group-addon">联系电话</span>
+					<input type="text" class="form-control" id="name" name="name">
+					<span class="input-group-addon">注册费</span>
+					<input type="text" class="form-control" id="name" name="name">
+				</div>
+			</ul>
+			<ul>
+				<div class="input-group">
+					<span class="input-group-addon">银行卡号</span>
+					<input type="text" class="form-control" id="name" name="name">
+					<span class="input-group-addon">开户行</span>
+					<input type="text" class="form-control" id="name" name="name">
+					<span class="input-group-addon">房间号</span>
+					<input type="text" class="form-control" id="name" name="name">
+					<span class="input-group-addon">住宿天数</span>
+					<input type="text" class="form-control" id="name" name="name">
+					<span class="input-group-addon">奖券号</span>
+					<input type="text" class="form-control" id="name" name="name">
+					<span class="input-group-addon">学分号</span>
+					<input type="text" class="form-control" id="name" name="name">
+				</div>
+			</ul>
+		</form>
+	</div>
+</div>
+<div class="panel panel-default">
+	<div class="panel-body">
+		<div class="table table-bordered table-responsive table-striped table-hover table-condensed">
+			<table class="table" id="person_table">
+				<caption>查找记录</caption>
+				<thead>
+					<tr>
+						<th> <input type="checkbox" id="checkAll"></th>
+						<th>编号</th>
+						<th>姓名</th>
+						<th>性别</th>
+						<th>身份证号</th>
+						<th>工作单位</th>
+						<th>科室</th>
+						<th>学历</th>
+						<th>职称</th>
+						<th>职务</th>
+						<th>联系电话</th>
+						<th>签到时间</th>
+						<th>注册费</th>
+						<th>银行卡号</th>
+						<th>开户行</th>
+						<th>房间号</th>
+						<th>住宿天数</th>
+						<th>奖券号</th>
+						<th>学分号</th>
+					</tr>
+				</thead>
+				<tbody>
+					{%if persons%} {% for person in persons%}
+					<tr>
+						<td><input type="checkbox"></td>
+						<td>{{person.id}}</td>
+						<td>{{person.name}}</td>
+						<td>{{person.sex}}</td>
+						<td>{{person.cardid}}</td>
+						<td>{{person.company}}</td>
+						<td>{{person.department}}</td>
+						<td>{{person.degree}}</td>
+						<td>{{person.title}}</td>
+						<td>{{person.post}}</td>
+						<td>{{person.phone}}</td>
+						<td>{{person.registtime}}</td>
+						<td>{{person.pay}}</td>
+						<td>{{person.banknum}}</td>
+						<td>{{person.room}}</td>
+						<td>{{person.hoteldays}}</td>
+						<td>{{person.ticketnum}}</td>
+						<td>{{person.score}}</td>
+					</tr>
+					{% endfor%} {% endif%}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}
