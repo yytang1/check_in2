@@ -82,8 +82,12 @@ def check_in(req):
             print(req.GET)
             return render_to_response('check_in2.html', {'errors': errors})
         if 'btn_edit' in req.GET:
+#             if 'id' in req.GET:
+#                 id=req.GET['id']
+                
             print(req.GET)
         if 'btn_delete' in req.GET:
+            
             print(req.GET)
     except Exception as err:
         errors.append(err)
