@@ -13,33 +13,33 @@ def condition_add(condition, str1):
             str1 = " and " + str1 
             condition += str1
     else:
-        condition = ' where '+str1
+        condition = ' where ' + str1
     return condition
 
 def check_in(req):
     errors = []
-    persons=[]
-    btn_name=""
+    persons = []
+    btn_name = ""
     try:
         if 'btn_name' in req.GET:
-            btn_name=req.GET['btn_name']
+            btn_name = req.GET['btn_name']
         if 'btn_search'in req.GET:
             cursor = connection.cursor()
             sql = "select * from conference"
-            condition=''
+            condition = ''
             print(req.GET)
             if 'name' in req.GET:
-                name=req.GET['name']
-                if len(name)>0:
-                    query="name='"+name+"'"
-                    condition=condition_add(condition, query)
+                name = req.GET['name']
+                if len(name) > 0:
+                    query = "name='" + name + "'"
+                    condition = condition_add(condition, query)
             if 'company' in req.GET:
-                company =req.GET['company']
+                company = req.GET['company']
             if 'sex' in req.GET:
-                sex =req.GET['sex']
+                sex = req.GET['sex']
             if 'cardid' in req.GET:
-                cardid =req.GET['cardid']
-            sql = sql+condition+";"
+                cardid = req.GET['cardid']
+            sql = sql + condition + ";"
             print(sql)
             cursor.execute(sql)
             desc = cursor.description
@@ -52,43 +52,75 @@ def check_in(req):
                 print(person.pay)
                 persons.append(person)
                 print(persons)
-            return render_to_response('check_in2.html',{'persons':persons})
+            return render_to_response('check_in2.html', {'persons':persons})
 #         if 'btn_add' or 'add' in req.GET:
         if btn_name == "add":
             print(req.GET)
             print(req.POST)
-            conference=CONFERENCE()
-            conference.name=req.GET['name']
-            conference.sex=req.GET['sex']
+            conference = CONFERENCE()
+            conference.name = req.GET['name']
+            conference.sex = req.GET['sex']
             print('性别')
             print(conference.sex)
-            conference.cardid=req.GET['cardid']
-            conference.company=req.GET['company']
-            conference.department=req.GET['department']
-            conference.degree=req.GET['degree']
-            conference.title=req.GET['title']
-            conference.post=req.GET['post']
-            conference.phone=req.GET['phone']
-            conference.registtime=datetime.now()
-#             conference.pay=string.atoi(req.GET['pay'])
-            conference.banknum=req.GET['banknum']
-            conference.bankname=req.GET['bankname']
-            conference.room=req.GET['room']
-#             conference.hoteldays=string.atoi(req.GET['hoteldays'])
-            conference.ticketnum=req.GET['ticketnum']
-            conference.score=req.GET['score']
+            conference.cardid = req.GET['cardid']
+            conference.company = req.GET['company']
+            conference.department = req.GET['department']
+            conference.degree = req.GET['degree']
+            conference.title = req.GET['title']
+            conference.post = req.GET['post']
+            conference.phone = req.GET['phone']
+            conference.registtime = datetime.now()
+            if req.GET['pay'].isdigit():
+                conference.pay = int(req.GET['pay'])
+            conference.banknum = req.GET['banknum']
+            conference.bankname = req.GET['bankname']
+            conference.room = req.GET['room']
+            day = req.GET['hoteldays']
+            if day.isdigit():
+                conference.hoteldays = int(day)
+            conference.ticketnum = req.GET['ticketnum']
+            conference.score = req.GET['score']
             conference.save()
-            print(conference)
-            print(req.GET)
+            errors.append("新增人员成功")
             return render_to_response('check_in2.html', {'errors': errors})
         if 'btn_edit' in req.GET:
-#             if 'id' in req.GET:
-#                 id=req.GET['id']
-                
-            print(req.GET)
-        if 'btn_delete' in req.GET:
-            
-            print(req.GET)
+            if 'id' in req.GET:
+                id = req.GET['id']
+                if len(id) < 1:
+                    errors.append("修改人员失败，该人员不存在，请仔细检查")
+                    return render_to_response('check_in2.html', {'errors': errors})
+                person = CONFERENCE.objects.get(id=id)
+                person.name = req.GET['name']
+                person.sex = req.GET['sex']
+                person.cardid = req.GET['cardid']
+                person.company = req.GET['company']
+                person.department = req.GET['department']
+                person.degree = req.GET['degree']
+                person.title = req.GET['title']
+                person.post = req.GET['post']
+                person.phone = req.GET['phone']
+                person.registtime = datetime.now()
+                person.banknum = req.GET['banknum']
+                person.bankname = req.GET['bankname']
+                person.room = req.GET['room']
+                day = req.GET['hoteldays']
+                if day.isdigit():
+                    person.hoteldays = int(day)
+                person.ticketnum = req.GET['ticketnum']
+                if req.GET['pay'].isdigit():
+                    person.pay = int(req.GET['pay'])
+                person.score = req.GET['score']
+                person.save()
+                errors.append("修改信息成功")
+                return render_to_response('check_in2.html', {'errors': errors})
+            return render_to_response('check_in2.html', {'errors': errors})
+        if 'btn_delete' or 'hidd_del' in req.GET:
+            values= req.GET.getlist('personCheck[]')
+            for value in values:
+                person=CONFERENCE.objects.get(id=value)
+                person.delete()
+            errors.append('删除人员成功')
+            return render_to_response('check_in2.html', {'errors': errors})
     except Exception as err:
         errors.append(err)
         print(err)  
