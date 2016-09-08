@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from check_in_app.models import CONFERENCE
 from django.db import connection
-from _datetime import datetime
+from datetime import datetime
+from check_in_app.exportData import exportData
 # Create your views here.
 def index(req):
     return render_to_response('index.html')
@@ -45,23 +47,30 @@ def check_in(req):
             desc = cursor.description
             rows = [ dict(zip([col[0] for col in desc], row)) for row in cursor.fetchall()]
             sum1 = len(rows)
+            str1=u'共有'+str(sum1)+u'条记录'
             for row in rows:
-                nametemp = row['name']
-                print(nametemp)
-                person = CONFERENCE.objects.get(name=nametemp)
-                print(person.pay)
+                nametemp = row['id']
+                person = CONFERENCE.objects.get(id=nametemp)
+                if person.sex == 0:
+                    person.sex = u"女"
+                if person.sex == 1:
+                    person.sex = u"男"
                 persons.append(person)
                 print(persons)
-            return render_to_response('check_in2.html', {'persons':persons})
+                if len(persons)>=20:
+                    str1+=u',下面显示20条'
+                    break
+            errors.append(str1)
+            return render_to_response('check_in2.html', {'persons':persons,'errors': errors})
 #         if 'btn_add' or 'add' in req.GET:
         if btn_name == "add":
-            print(req.GET)
-            print(req.POST)
             conference = CONFERENCE()
             conference.name = req.GET['name']
-            conference.sex = req.GET['sex']
-            print('性别')
-            print(conference.sex)
+            person_sex = req.GET['sex']
+            if person_sex == u'男':
+                conference.sex = 1
+            if person_sex == u'女':
+                conference.sex = 0
             conference.cardid = req.GET['cardid']
             conference.company = req.GET['company']
             conference.department = req.GET['department']
@@ -75,54 +84,69 @@ def check_in(req):
             conference.banknum = req.GET['banknum']
             conference.bankname = req.GET['bankname']
             conference.room = req.GET['room']
-            day = req.GET['hoteldays']
-            if day.isdigit():
-                conference.hoteldays = int(day)
+            day1 = req.GET['hoteldays']
+            if day1.isdigit():
+                conference.hoteldays = int(day1)
             conference.ticketnum = req.GET['ticketnum']
             conference.score = req.GET['score']
             conference.save()
-            errors.append("新增人员成功")
+            errors.append(u"新增人员成功")
             return render_to_response('check_in2.html', {'errors': errors})
         if 'btn_edit' in req.GET:
             if 'id' in req.GET:
-                id = req.GET['id']
-                if len(id) < 1:
-                    errors.append("修改人员失败，该人员不存在，请仔细检查")
+                person_id = req.GET['id']
+                if len(person_id) < 1:
+                    errors.append(u"修改人员失败，该人员不存在，请仔细检查")
                     return render_to_response('check_in2.html', {'errors': errors})
-                person = CONFERENCE.objects.get(id=id)
-                person.name = req.GET['name']
-                person.sex = req.GET['sex']
-                person.cardid = req.GET['cardid']
-                person.company = req.GET['company']
-                person.department = req.GET['department']
-                person.degree = req.GET['degree']
-                person.title = req.GET['title']
-                person.post = req.GET['post']
-                person.phone = req.GET['phone']
-                person.registtime = datetime.now()
-                person.banknum = req.GET['banknum']
-                person.bankname = req.GET['bankname']
-                person.room = req.GET['room']
-                day = req.GET['hoteldays']
-                if day.isdigit():
-                    person.hoteldays = int(day)
-                person.ticketnum = req.GET['ticketnum']
+                conference = CONFERENCE.objects.get(id=person_id)
+                conference.name = req.GET['name']
+                person_sex = req.GET['sex']
+                if person_sex == u'男':
+                    conference.sex = 1
+                if person_sex == u'女':
+                    conference.sex = 0
+                conference.cardid = req.GET['cardid']
+                conference.company = req.GET['company']
+                conference.department = req.GET['department']
+                conference.degree = req.GET['degree']
+                conference.title = req.GET['title']
+                conference.post = req.GET['post']
+                conference.phone = req.GET['phone']
+                conference.registtime = datetime.now()
+                print(datetime.now())
                 if req.GET['pay'].isdigit():
-                    person.pay = int(req.GET['pay'])
-                person.score = req.GET['score']
-                person.save()
-                errors.append("修改信息成功")
+                    conference.pay = int(req.GET['pay'])
+                conference.banknum = req.GET['banknum']
+                conference.bankname = req.GET['bankname']
+                conference.room = req.GET['room']
+                day1 = req.GET['hoteldays']
+                if day1.isdigit():
+                    conference.hoteldays = int(day1)
+                conference.ticketnum = req.GET['ticketnum']
+                conference.score = req.GET['score']
+                conference.save()
+                errors.append(u"修改信息成功")
                 return render_to_response('check_in2.html', {'errors': errors})
             return render_to_response('check_in2.html', {'errors': errors})
         if 'btn_delete' or 'hidd_del' in req.GET:
-            values= req.GET.getlist('personCheck[]')
+            values = req.GET.getlist('personCheck[]')
             for value in values:
-                person=CONFERENCE.objects.get(id=value)
+                person = CONFERENCE.objects.get(id=value)
                 person.delete()
-            errors.append('删除人员成功')
+            if values:
+                errors.append(u'删除人员成功')
             return render_to_response('check_in2.html', {'errors': errors})
     except Exception as err:
         errors.append(err)
         print(err)  
         return render_to_response('check_in2.html', {'errors': errors})
     return render_to_response('check_in2.html')
+def export(req):
+    messages = []
+    if 'export_q' in req.GET and req.GET['export_q'] == 'export':
+        if 'filename' in req.GET:
+            filename = req.GET['filename']
+            if filename == '':
+                filename = 'backup'
+        messages = exportData(filename)
+    return render_to_response('export.html', {'messages':messages})

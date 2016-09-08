@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block navbar %}
+listNavbar[1].classList.add('active')
+{% endblock %}
+{% block content %}
+        <div class="hero-unit">
+        <ul>
+        <form action="/export/" method="get">
+            <div class="page-header">
+                <h2>导出</h2>
+                {%if messages%}
+                    <ul>
+                    {%for message in messages%}
+                        <li style="color:red">{{message}}</li>
+                    {%endfor%}
+                    </ul>
+                {%endif%}
+                <input type="submit" class="btn btn btn-primary" name="export_q" value="export">
+                <table>
+                    <tr class="mytrB" style="height:35px;">
+                        <td class="mylabel"><label for="FileNameTextBox">请输入保存文件名: </label></td>
+                        <td><input name="filename" type="text" maxlength="80" id="FileNameTextBox" style="width:300px;"></td>
+                    </tr>
+                </table>
+                <label style="color:red">* 默认将数据导出到D盘根目录</label>
+                <br>
+                <label style="color:red">* 默认文件名为backup</label>
+            </div>
+        </form>
+        </div> 
+        </ul>
+        <ul>
+        <div class="hero-unit">
+            <div class="page-header">
+                <h2>导入</h2>
+                <label>1.在excel数据文件中添加第一列----id，从1开始自动编号</label>
+                <br>
+                <label>2.新建data.txt，将编码格式改为utf-8</label>
+                <br>
+                <label>3.将excel文件中的数据copy到data.txt中</label>
+                <br>
+                <label>4.修改mysql表编码为utf-8(default): alter table table_name character set utf8;</label>
+                <br>
+                <label>5.truncate table_name;</label>
+                <br>
+                <label>6.alter table table_name auto_increment = 1;</label>
+                <br>
+                <label>7.load data local infile 'D:\data.txt' into table table_name fields terminated by '\t';</label>
+            </div>
+        </div> 
+        <div>备忘录：
+            1，左侧导航栏，选中之后要有深色标记，功能完成之后完善该细节
+        </div>
+        </ul>
+        {% endblock %}

@@ -1,15 +1,10 @@
 {% extends "base.html" %} 
-
-{% block navbar %}
-listNavbar[0].classList.add('active')
-{% endblock %}
-
 {% block content %}
-    <div class="row">
+    <!--<div class="row">
         <div class="col-sm-2 col-md-2 sidebar" role="navigation">
             <ul class="nav nav-sidebar nav-default">
                 <li><a href="/check_in">签到</a></li>
-                <li><a href="/import_export">导入导出</a></li>
+                <li><a href="/export">导入导出</a></li>
             </ul>
             <script type="text/javascript">
                 var list = document.querySelectorAll("ul.nav-sidebar li")
@@ -20,9 +15,9 @@ listNavbar[0].classList.add('active')
                 {% endblock %}
             </script>
         </div>
-        <div class="col-md-10">
+        <div class="col-md-10">-->
         {% block vulneContent %}
         {% endblock %}
-        </div>
-    </div>
+        <!--</div>-->
+    <!--</div>-->
 {% endblock %}
